@@ -34,4 +34,4 @@ Route::get("/admin/dashboard" , [AdminController::class , "index"])->name('admin
 
 Route::resource("/admin/karyawan" , KarywanController::class);
 Route::resource("/admin/golongan" , GolonganController::class);
-Route::resource("/admin/laporan-kehadiran" , LaporanController::class);
+Route::resource("/admin/laporan-kehadiran" , LaporanController::class)
