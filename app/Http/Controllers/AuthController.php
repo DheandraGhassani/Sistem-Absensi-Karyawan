@@ -13,7 +13,7 @@ class AuthController extends Controller
     }
 
     public function authenticate(){
-        return redirect()->route('user.dashboard')
+        return redirect()->route('user.dashboard');
     }
     
 }
