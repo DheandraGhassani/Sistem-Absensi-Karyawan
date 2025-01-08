@@ -91,4 +91,4 @@ class LaporanController extends Controller
             'karyawanList' => $karyawanList
         ]);
     }
-}
+};
