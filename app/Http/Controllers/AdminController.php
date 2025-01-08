@@ -15,4 +15,4 @@ class AdminController extends Controller
         $group = Group::count();
         return view("admin.index", compact('employees', 'group'));
     }
-}
+};
