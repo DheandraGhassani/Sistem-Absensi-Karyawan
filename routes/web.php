@@ -28,12 +28,10 @@ Route::get("/dashboard/laporan-bulanan/{bulan}", [DashboardController::class, "l
 Route::get("/dashboard/izin", [DashboardController::class, "izin"])->name('user.izin');
 Route::get("/dashboard/riwayat-izin", [DashboardController::class, "riwayatIzin"])->name('user.riwayatIzin');
 
-Route::get("/dashboard/setting" , [DashboardController::class , "setting"]);
+Route::get("/dashboard/setting", [DashboardController::class, "setting"]);
 
-Route::get("/admin/dashboard" , [AdminController::class , "index"])->name('admin.dashboard');
+Route::get("/admin/dashboard", [AdminController::class, "index"])->name('admin.dashboard');
 
-Route::resource("/admin/karyawan" , KarywanController::class);
-Route::resource("/admin/golongan" , GolonganController::class);
-Route::resource("/admin/laporan-kehadiran" , LaporanController::class);
-
-
+Route::resource("/admin/karyawan", KarywanController::class);
+Route::resource("/admin/golongan", GolonganController::class);
+Route::resource("/admin/laporan-kehadiran", LaporanController::class);

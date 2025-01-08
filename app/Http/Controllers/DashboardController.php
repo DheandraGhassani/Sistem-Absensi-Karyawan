@@ -39,19 +39,20 @@ class DashboardController extends Controller
     }
 
 
-    public function riwayatIzin(){
+    public function riwayatIzin()
+    {
         return view("dashboard.izin.riwayat");
-
     }
 
 
-    public function riwayaLampiranAbsensi() {
+    public function riwayaLampiranAbsensi()
+    {
         return view("dashboard.cuti.riwayat-lampiran-absensi");
     }
 
-    public function setting(){
+    public function setting()
+    {
 
         return view("dashboard.settings.index");
     }
-
 }

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Login | OnTime</title>
-    @vite('resources/css/app.css')
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body class="flex items-center justify-center min-h-screen">
@@ -43,10 +43,39 @@
                     class="w-full py-2 px-4 bg-[#86DED7] text-white font-semibold rounded-lg shadow hover:bg-[#59938e] focus:outline-none focus:ring-2 focus:ring-[#59938e] focus:ring-opacity-50">
                     Login
                 </button>
-
             </form>
         </div>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            @if (session('success'))
+                Swal.fire({
+                    title: 'Success!',
+                    text: '{{ session('success') }}',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                });
+            @elseif (session('error'))
+                Swal.fire({
+                    title: 'Error!',
+                    text: '{{ session('error') }}',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            @endif
+
+            @if ($errors->any())
+                Swal.fire({
+                    title: 'Validation Error!',
+                    text: '{{ $errors->first() }}', // Menampilkan pesan error pertama
+                    icon: 'warning',
+                    confirmButtonText: 'OK'
+                });
+            @endif
+        });
+    </script>
+
 </body>
 
 </html>
