@@ -32,4 +32,4 @@ class AuthController extends Controller
         }
         return redirect()->back()->with('error', 'Oops, harap check email atau password kamu!');
     }
-}
+};
