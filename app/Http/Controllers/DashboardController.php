@@ -80,4 +80,4 @@ class DashboardController extends Controller
 
         return view("dashboard.settings.index");
     }
-};
+}
