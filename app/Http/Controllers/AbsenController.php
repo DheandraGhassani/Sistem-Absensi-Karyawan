@@ -124,4 +124,4 @@ class AbsenController extends Controller
             200
         );
     }
-}
+};
