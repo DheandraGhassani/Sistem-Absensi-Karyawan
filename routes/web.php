@@ -1,19 +1,21 @@
 <?php
 
+use App\Http\Controllers\AbsenController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GolonganController;
 use App\Http\Controllers\KarywanController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\RequestCutiController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
 
 
-Route::get("login", [AuthController::class, 'login']);
+Route::get("login", [AuthController::class, 'login'])->name('login');
 Route::post("authenticate", [AuthController::class, "authenticate"])->name('authenticate');
 Route::get("/dashboard", [DashboardController::class, "index"])->name('user.dashboard');
 Route::get("/dashboard/cuti", [DashboardController::class, "cuti"])->name('user.cuti');
@@ -32,6 +34,17 @@ Route::get("/dashboard/setting", [DashboardController::class, "setting"]);
 
 Route::get("/admin/dashboard", [AdminController::class, "index"])->name('admin.dashboard');
 
+
 Route::resource("/admin/karyawan", KarywanController::class);
 Route::resource("/admin/golongan", GolonganController::class);
 Route::resource("/admin/laporan-kehadiran", LaporanController::class);
+
+
+
+// api
+Route::post('/absen/keluar', [AbsenController::class, 'keluar']);
+Route::post('/absen/masuk', [AbsenController::class, 'masuk']);
+
+Route::post('/request/cuti', [RequestCutiController::class, 'store']);
+
+Route::post('logout', [AuthController::class, 'logout'])->name('logout');
