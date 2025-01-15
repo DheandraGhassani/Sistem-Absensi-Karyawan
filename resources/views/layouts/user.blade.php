@@ -2,6 +2,40 @@
 <html lang="en">
 
 <head>
+
+    @php
+
+        use Carbon\Carbon;
+
+        $employee = Auth::user()->employee->first();
+
+        // Daftar status yang diinginkan
+        $statuses = ['Hadir', 'Sakit', 'Izin', 'Absen'];
+
+        // Mendapatkan bulan dan tahun saat ini
+        $currentMonth = Carbon::now()->month;
+        $currentYear = Carbon::now()->year;
+
+        $absensiCount = collect(); // Koleksi untuk menyimpan hasil
+
+        foreach ($statuses as $status) {
+            // Menghitung jumlah absensi berdasarkan status, bulan, dan tahun
+            $count = DB::table('absensis')
+                ->where('employee_id', $employee->id)
+                ->where('status', $status)
+                ->whereMonth('date_absensi', $currentMonth)
+                ->whereYear('date_absensi', $currentYear)
+                ->count();
+
+            $absensiCount->push([
+                'status' => $status,
+                'total' => $count,
+            ]);
+        }
+    @endphp
+
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -109,26 +143,24 @@
                     Manager
                 </p>
                 <p class="font-bold text-[#F28300] text-xl text-center">Rafi Ramadhan Sudirman</p>
-                <p class="font-bold text-black text-lg text-center">Rabu, 23 Oktober 2024</p>
+                <p class="font-bold text-black text-lg text-center">
+                    {{ \Carbon\Carbon::now()->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</p>
 
                 <hr class="border-dashed border-black my-4">
                 <div class="flex flex-row justify-evenly flex-wrap">
-                    <div>
-                        <p class="text-black font-medium text-md text-center">Hadir</p>
-                        <p class="text-green-700 font-bold text-md text-center">28</p>
-                    </div>
-                    <div>
-                        <p class="text-black font-medium text-md text-center">Sakit</p>
-                        <p class="text-blue font-bold text-md text-center">8</p>
-                    </div>
-                    <div>
-                        <p class="text-black font-medium text-md text-center">Izin</p>
-                        <p class="text-[#F28300] font-bold text-md text-center">28</p>
-                    </div>
-                    <div>
-                        <p class="text-black font-medium text-md text-center">Absen</p>
-                        <p class="text-red-600 font-bold text-md text-center">28</p>
-                    </div>
+                    @foreach ($absensiCount as $absensi)
+                        <div>
+                            <p class="text-black font-medium text-md text-center">{{ $absensi['status'] }}</p>
+                            <p
+                                class="font-bold text-md text-center
+                                @if ($absensi['status'] == 'Hadir') text-green-700
+                                @elseif($absensi['status'] == 'Sakit') text-blue
+                                @elseif($absensi['status'] == 'Izin') text-[#F28300]
+                                @else text-red-600 @endif">
+                                {{ $absensi['total'] }}
+                            </p>
+                        </div>
+                    @endforeach
                 </div>
             </div>
         </div>
@@ -141,8 +173,8 @@
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
-        // Initialize the map
-        var map = L.map('map').setView([-7.250445, 112.768845], 13); // Example coordinates
+        // Initialize the map with a default view (fallback)
+        var map = L.map('map').setView([-7.250445, 112.768845], 13); // Default coordinates
 
         // Add OpenStreetMap tile layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -150,13 +182,35 @@
             attribution: '© OpenStreetMap'
         }).addTo(map);
 
-        // Add a marker
-        L.marker([-7.250445, 112.768845]).addTo(map)
-            .bindPopup('Your Location')
-            .openPopup();
+        // Function to handle successful geolocation
+        function onLocationFound(e) {
+            var lat = e.coords.latitude;
+            var lng = e.coords.longitude;
 
-        // Display modal on first visit
+            // Update map view to current location
+            map.setView([lat, lng], 13);
+
+            // Add a marker at the current location
+            L.marker([lat, lng]).addTo(map)
+                .bindPopup('You are here')
+                .openPopup();
+        }
+
+        // Function to handle geolocation errors
+        function onLocationError(error) {
+            console.error('Geolocation error: ', error.message);
+            alert('Unable to retrieve your location. Default location is shown.');
+        }
+
+        // Check if geolocation is available
+        if (navigator.geolocation) {
+            // Get the current position
+            navigator.geolocation.getCurrentPosition(onLocationFound, onLocationError);
+        } else {
+            alert('Geolocation is not supported by your browser. Default location is shown.');
+        }
     </script>
+
 
 
     <script>

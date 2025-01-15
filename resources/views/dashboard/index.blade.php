@@ -9,17 +9,16 @@
     </style>
 
     {{-- welcome modal --}}
-    <div id="welcomeModal" class="modal">
+    <div id="welcomeModal" class="modal show">
         <div class="modal-content text-center">
             <h2>Selamat Datang</h2>
             <img src="/assets/images/profile-default.png" class="mx-auto mt-2" alt="">
 
-            <p class="text-center mt-2">2172040</p>
-            <p class="font-bold text-[#F28300] text-xl text-center">Rafi Ramadhan Sudirman</p>
-            <p class="font-medium text-center text-black">Staff Manager ICT</p>
-            <p class="font-medium text-center text-black"> PT. XYZ Bersinergi </p>
-            <p class="font-bold text-black text-xl text-center">PT. Teknik Informatika</p>
-            <p class="font-bold text-black text-xl text-center">Kota Bandung</p>
+            <p class="text-center mt-2">{{ $employee->nip }}</p>
+            <p class="font-bold text-[#F28300] text-xl text-center">{{ Auth::user()->name }}</p>
+            <p class="font-medium text-center text-black">{{ $employee->group->name }}</p>
+            <p class="font-medium text-center text-black"> {{ $employee->departement }} </p>
+            <p class="font-bold text-black text-xl text-center">{{ $employee->position }}</p>
             <button id="closeModal" class="modal-close text-[#F28300] text-xl text-center">Dismiss</button>
         </div>
     </div>
@@ -58,8 +57,10 @@
         <div class="modal-content bg-white">
             <img src="/assets/images/success_presensi.png" class="mx-auto h-[200px]" alt="">
             <h4 class="text-[#403F3F] text-lg font-bold">Anda Masuk pukul</h4>
-            <h1 class="text-4xl text-[#06923A] font-bold mt-6">07:58</h1>
-            <p class="text-sm text-[#06923A] font-normal mt-2">Berhasil absen pada tanggal 22 Juni 2022</p>
+            <h1 class="text-4xl text-[#06923A] font-bold mt-6">
+                {{ \Carbon\Carbon::now()->format('H:i:s') }}
+            </h1>
+            <p class="text-sm text-[#06923A] font-normal mt-2">Berhasil absen pada tanggal {{ \Carbon\Carbon::now() }}</p>
 
             <div id="donePresensi"
                 class="bg-[#F28300] flex flex-row gap-3 text-white mx-auto w-fit px-14 py-2 mt-6 rounded-lg items-center cursor-pointer">
@@ -75,7 +76,9 @@
         <div class="modal-content bg-white">
             <img src="/assets/images/success_presensi.png" class="mx-auto h-[200px]" alt="">
             <h4 class="text-[#403F3F] text-lg font-bold">Anda keluar pukul</h4>
-            <h1 class="text-4xl text-red-700 font-bold mt-6">07:58</h1>
+            <h1 class="text-4xl text-red-700 font-bold mt-6">
+                {{ \Carbon\Carbon::now()->format('H:i:s') }}
+            </h1>
             <div id="doneKeluar"
                 class="bg-[#F28300] flex flex-row gap-3 text-white mx-auto w-fit px-14 py-2 mt-6 rounded-lg items-center cursor-pointer">
                 Done
@@ -115,7 +118,8 @@
                     <p class="text-[#535353] font-bold mt-2">Setting</p>
                 </div>
             </div>
-            <button id="closeModel" class="modal-close text-[#F28300] text-xl text-center">Dismiss</button>
+            <button id="closeModel" onclick="closeLampiran()"
+                class="modal-close text-[#F28300] text-xl text-center">Dismiss</button>
         </div>
     </div>
     <div
@@ -129,12 +133,12 @@
             </div>
             <div class="flex flex-row gap-10 justify-center mt-5">
                 <button onclick="presensi()" id="btnPresensi"
-                    class="px-4 py-2 bg-[#F28300] rounded-lg text-white flex flex-row items-center gap-1 hidden">
+                    class="hidden px-4 py-2 bg-[#F28300] rounded-lg text-white flex flex-row items-center gap-1 ">
                     <img src="/assets/images/scann.png" alt="">
                     Hadir
                 </button>
                 <button onclick="keluar()" id="btnKeluar"
-                    class="px-4 py-2 bg-[#F28300] rounded-lg text-white flex flex-row items-center gap-1 hidden">
+                    class="hidden px-4 py-2 bg-[#F28300] rounded-lg text-white flex flex-row items-center gap-1 ">
                     <img src="/assets/images/scann.png" alt="">
                     Keluar
                 </button>
@@ -142,26 +146,33 @@
             </div>
         </div>
 
+
         <!-- History Section -->
         <div class="w-full lg:w-[40%]">
             <h2 class="text-[#F28300] font-bold mt-10">Riwayat Absensi</h2>
             <div class="flex space-y-4 flex-col">
-                @foreach ([[], [], [], []] as $item)
+                @foreach ($absensis as $item)
                     <div class="bg-[#F7CCCC] p-4 rounded-md flex flex-row">
                         <img src="/assets/images/press-release.png" class="bg-white p-3 rounded-lg mr-2" alt="">
                         <div class="flex items-end justify-between w-full">
                             <div class="flex flex-col justify-start font-medium">
-                                <p class="text-md text-[#535353]">Rabu, 23 Oktober 2024 </p>
-                                <h4 class="text-white font-bold text-xl">15:56</h4>
+                                <p class="text-md text-[#535353]">
+                                    {{ \Carbon\Carbon::parse($item->date_absensi)->locale('id')->translatedFormat('l, d/m/Y') }}
+                                </p>
+                                <h4 class="text-white font-bold text-xl">{{ $item->time_in }}</h4>
                             </div>
                             <div class="flex items-center gap-1">
-                                <button class="px-4 py-2 bg-[#F29B9B] rounded-lg text-red-700 font-medium">Pending</button>
-                                <div class="rounded-full h-[5px] w-[5px] bg-black"></div>
                                 <button
-                                    class="px-4 py-2 bg-[#8FD1A8] rounded-lg text-[#06923A] font-medium flex flex-row items-center gap-1">
-                                    <img src="/assets/images/up-arrow 1.png" alt="">
-                                    Absen Masuk
-                                </button>
+                                    class="px-4 py-2 bg-[#F29B9B] rounded-lg text-red-700 font-medium">{{ $item->status }}</button>
+                                {{-- <div class="rounded-full h-[5px] w-[5px] bg-black"></div> --}}
+                                @if ($item->time_out == '00:00:00')
+                                    <button
+                                        class="px-4 py-2 bg-[#8FD1A8] rounded-lg text-[#06923A] font-medium flex flex-row items-center gap-1">
+                                        <img src="/assets/images/up-arrow 1.png" alt="">
+                                        Keluar
+                                    </button>
+                                @else
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -173,92 +184,127 @@
     <script>
         const btnLampiran = document.getElementById('lampiranBtn')
         const modalLampiran = document.getElementById('lampiranModal')
-        const modalMasuk = document.getElementById('masukModal')
-        const suksesModal = document.getElementById('suksesModal')
-        const btnPresensi = document.getElementById('btnPresensi')
-        const btnKeluar = document.getElementById('btnKeluar')
 
-        btnPresensi.classList.remove('hidden')
 
-        btnLampiran.addEventListener('click', () => {
-            modalLampiran.classList.add('show');
+        btnLampiran.addEventListener('click', function() {
+            modalLampiran.classList.add('show')
         })
 
-        const closeModalBtnClass = document.getElementById('closeModel');
+        const welcomeModal = document.getElementById('welcomeModal');
 
-        closeModalBtnClass.addEventListener('click', () => {
-            modalLampiran.classList.remove('show');
-        })
-
-        window.addEventListener('click', (event) => {
-            if (event.target === modalMasuk) {
-                modalMasuk.classList.remove('show');
-            }
-
-            if (event.target === modalLampiran) {
-                modalLampiran.classList.remove('show');
-            }
-
+        // Welcome Modal Dismiss Button
+        document.getElementById('closeModal').addEventListener('click', () => {
+            welcomeModal.classList.remove('show');
         });
 
-        function presensi() {
-            modalMasuk.classList.add('show')
 
-            setTimeout(() => {
-                modalMasuk.classList.remove('show');
-                suksesModal.classList.add('show');
-                btnPresensi.classList.add('hidden')
-                btnKeluar.classList.remove('hidden')
-            }, 3000);
+
+        const btnPresensi = document.getElementById('btnPresensi'); // Tombol Masuk
+        const btnKeluar = document.getElementById('btnKeluar'); // Tombol Keluar
+
+        const modalMasuk = document.getElementById('masukModal'); // Modal Masuk
+        const suksesModal = document.getElementById('suksesModal'); // Modal Sukses Masuk
+
+        const modalKeluar = document.getElementById('keluarModal'); // Modal Keluar
+        const suksesKeluarModal = document.getElementById('suksesKeluarModal'); // Modal Sukses Keluar
+
+
+        function closeLampiran() {
+            modalLampiran.classList.remove('show')
         }
 
-        const doneBtn = document.getElementById('donePresensi')
-        doneBtn.addEventListener('click', function() {
-            suksesModal.classList.remove('show')
-            window.location.href = '/dashboard/riwayat-lampiran-absensi'
-        })
+        async function absenMasuk() {
+            try {
+                modalMasuk.classList.add('show')
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const modal = document.getElementById('welcomeModal');
+                const response = await fetch('/absen/masuk', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                });
 
+                const result = await response.json();
 
-
-            const closeModalBtn = document.getElementById('closeModal');
-
-            if (!localStorage.getItem('visited')) {
-                modal.classList.add('show');
-                localStorage.setItem('visited', 'true');
-            }
+                console.log(result)
 
 
-            if (!localStorage.getItem('visited')) {
-                modal.classList.add('show');
-                localStorage.setItem('visited', 'true');
-            }
-            closeModalBtn.addEventListener('click', () => {
-                modal.classList.remove('show');
-            });
+                modalMasuk.classList.remove('show')
 
-            window.addEventListener('click', (event) => {
-                if (event.target === modal) {
-                    modal.classList.remove('show');
+                if (response.ok) {
+                    suksesModal.classList.add('show')
+                } else {
+                    alert(result.message)
                 }
-            });
-        });
-        const modalSuksesKeluar = document.getElementById('suksesKeluarModal')
 
-
-        function keluar() {
-            const modalKeluar = document.getElementById('keluarModal')
-            modalKeluar.classList.add('show')
-            setTimeout(() => {
-                modalKeluar.classList.remove('show')
-                modalSuksesKeluar.classList.add('show')
-            }, 3000);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat mencoba absen masuk!');
+            }
         }
 
-        document.getElementById('doneKeluar').addEventListener('click', function() {
-            modalSuksesKeluar.classList.remove('show')
-        })
+        // Ambil status presensi dari server
+        const sudahPresensiMasuk = {{ $alreadyCheckedIn ? 'true' : 'false' }};
+
+        // Tampilkan tombol berdasarkan status presensi
+        if (sudahPresensiMasuk) {
+            btnKeluar.classList.remove('hidden'); // Tampilkan tombol Keluar
+        } else {
+            btnPresensi.classList.remove('hidden'); // Tampilkan tombol Masuk
+        }
+
+        btnPresensi.addEventListener('click', () => {
+            modalMasuk.classList.add('show'); // Tampilkan modal masuk
+            absenMasuk();
+        });
+
+
+        document.getElementById('donePresensi').addEventListener('click', () => {
+            suksesModal.classList.remove('show');
+            window.location.reload();
+        });
+
+        btnKeluar.addEventListener('click', () => {
+            modalKeluar.classList.add('show');
+            absenKeluar();
+        });
+
+
+        async function absenKeluar() {
+            try {
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                console.log(csrfToken);
+
+                const response = await fetch('/absen/keluar', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                });
+
+                const result = await response.json();
+                modalKeluar.classList.remove('show');
+
+
+                if (response.ok) {
+                    suksesKeluarModal.classList.add('show');
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat mencoba absen keluar!');
+            }
+        }
+
+
+
+
+
+        document.getElementById('doneKeluar').addEventListener('click', () => {
+            suksesKeluarModal.classList.remove('show'); // Tutup modal sukses keluar
+            window.location.reload(); // Refresh halaman untuk status baru
+        });
     </script>
 @endsection

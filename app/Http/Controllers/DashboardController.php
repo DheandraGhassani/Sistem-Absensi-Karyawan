@@ -2,14 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Absensi;
+use App\Models\Employee;
+use App\Models\RequestCuti;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
     //
     public function index()
     {
-        return view("dashboard.index");
+        $employee = Auth::user()->employee->first();
+        $absensis = Absensi::where('employee_id', $employee->id)->get();
+
+        $today = Carbon::today();
+        $alreadyCheckedIn = Absensi::where('employee_id', $employee->id)
+            ->whereDate('date_absensi', $today)
+            ->where('time_out', '00:00:00')
+            ->exists();
+
+        return view("dashboard.index", compact('employee', 'absensis', 'alreadyCheckedIn'));
     }
 
     public function cuti()
@@ -19,7 +34,15 @@ class DashboardController extends Controller
 
     public function riwayatCuti()
     {
-        return view("dashboard.cuti.riwayat");
+
+        $employee = Auth::user()->employee->first();
+        $employee_id = $employee->id;
+
+
+        $absen = RequestCuti::where('employee_id', $employee_id)->where('jenis_cuti', 'Cuti')->get();
+        $izin = RequestCuti::where('employee_id', $employee_id)->where('jenis_cuti', 'Izin')->get();
+        $sakit = RequestCuti::where('employee_id', $employee_id)->where('jenis_cuti', 'Sakit')->get();
+        return view("dashboard.cuti.riwayat",  compact('absen', 'izin', 'sakit'));
     }
 
 
@@ -41,6 +64,8 @@ class DashboardController extends Controller
 
     public function riwayatIzin()
     {
+
+
         return view("dashboard.izin.riwayat");
     }
 

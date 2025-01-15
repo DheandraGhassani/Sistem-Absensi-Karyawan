@@ -30,7 +30,7 @@
                     <div class="grid grid-cols-2  gap-y-4">
                         <div class="flex gap-4 items-center">
                             <img src="/assets/images/user 1.png" class="p-2 rounded-full bg-white shadow-lg" alt="">
-                            <p class="text-lg font-bold">Informai Pribadi</p>
+                            <p class="text-lg font-bold">Informasi Pribadi</p>
                         </div>
                         <div class="flex gap-4 items-center">
                             <img src="/assets/images/user 1.png" class="p-2 rounded-full bg-white shadow-lg" alt="">
@@ -57,7 +57,11 @@
                             <p class="text-lg font-bold">Kebijakan Applikasi</p>
                         </div>
                     </div>
-                    <button class="bg-[#F28300] w-full rounded-lg py-4 mt-4 mb-2 text-black font-bold text-lg">Logout</button>
+                    <form action="{{ route('logout') }}" method="post">
+                        @csrf
+                        <button
+                            class="bg-[#F28300] w-full rounded-lg py-4 mt-4 mb-2 text-black font-bold text-lg">Logout</button>
+                    </form>
                 </div>
             </div>
         </div>

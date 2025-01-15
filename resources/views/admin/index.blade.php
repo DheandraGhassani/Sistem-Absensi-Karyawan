@@ -53,7 +53,7 @@
                     </div>
 
                     <div class="mx-5">
-                        <h4 class="text-2xl font-semibold text-gray-700">{{$group}}</h4>
+                        <h4 class="text-2xl font-semibold text-gray-700">{{ $group }}</h4>
                         <div class="text-gray-500">Total Golongan</div>
                     </div>
                 </div>
@@ -73,7 +73,7 @@
                     </div>
 
                     <div class="mx-5">
-                        <h4 class="text-2xl font-semibold text-gray-700">678</h4>
+                        <h4 class="text-2xl font-semibold text-gray-700">{{ $totalLaporan }}</h4>
                         <div class="text-gray-500">Total laporan</div>
                     </div>
                 </div>
