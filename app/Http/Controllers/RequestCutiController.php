@@ -56,4 +56,4 @@ class RequestCutiController extends Controller
             'message' => 'Success request cuti',
         ]);
     }
-}
+};
