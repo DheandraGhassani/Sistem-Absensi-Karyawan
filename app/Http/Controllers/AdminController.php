@@ -17,4 +17,4 @@ class AdminController extends Controller
         $totalLaporan = Absensi::count();
         return view("admin.index", compact('employees', 'group', 'totalLaporan'));
     }
-};
+}
