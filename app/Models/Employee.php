@@ -26,4 +26,4 @@ class Employee extends Model
     {
         return $this->hasMany(Absensi::class);
     }
-}
+};
