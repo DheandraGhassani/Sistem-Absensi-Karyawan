@@ -8,7 +8,7 @@ use App\Http\Controllers\GolonganController;
 use App\Http\Controllers\KarywanController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\RequestCutiController;
-use Illuminate\Support\Facades\Route
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return redirect()->route('login');
